@@ -398,25 +398,25 @@ SOURCES_C += $(ROOT_DIR)/Graphics/plugins.c
 ifeq ($(HAVE_GLIDE64),1)
 CFLAGS   += -DHAVE_GLIDE64
 CXXFLAGS += -DHAVE_GLIDE64
-SOURCES_C += $(VIDEODIR_GLIDE)/Glide64/glide64_3dmath.c \
-            $(VIDEODIR_GLIDE)/Glide64/Framebuffer_glide64.c \
-            $(VIDEODIR_GLIDE)/Glide64/Glide64_Ini.c \
-            $(VIDEODIR_GLIDE)/Glide64/glidemain.c \
-            $(VIDEODIR_GLIDE)/Glide64/glide64_util.c \
-				$(VIDEODIR_GLIDE)/Glide64/Glide64_UCode.c \
-            $(VIDEODIR_GLIDE)/Glide64/glide64_gSP.c \
-            $(VIDEODIR_GLIDE)/Glide64/glide64_gDP.c \
-            $(VIDEODIR_GLIDE)/Glide64/Combine.c \
-            $(VIDEODIR_GLIDE)/Glide64/TexCache.c \
-				$(VIDEODIR_GLIDE)/Glide64/MiClWr.c \
-            $(VIDEODIR_GLIDE)/Glide64/TexLoad.c \
-				$(VIDEODIR_GLIDE)/Glide64/glide64_rdp.c
+SOURCES_CXX += $(VIDEODIR_GLIDE)/Glide64/glide64_3dmath.cpp \
+            $(VIDEODIR_GLIDE)/Glide64/Framebuffer_glide64.cpp \
+            $(VIDEODIR_GLIDE)/Glide64/Glide64_Ini.cpp \
+            $(VIDEODIR_GLIDE)/Glide64/glidemain.cpp \
+            $(VIDEODIR_GLIDE)/Glide64/glide64_util.cpp \
+				$(VIDEODIR_GLIDE)/Glide64/Glide64_UCode.cpp \
+            $(VIDEODIR_GLIDE)/Glide64/glide64_gSP.cpp \
+            $(VIDEODIR_GLIDE)/Glide64/glide64_gDP.cpp \
+            $(VIDEODIR_GLIDE)/Glide64/Combine.cpp \
+            $(VIDEODIR_GLIDE)/Glide64/TexCache.cpp \
+				$(VIDEODIR_GLIDE)/Glide64/MiClWr.cpp \
+            $(VIDEODIR_GLIDE)/Glide64/TexLoad.cpp \
+				$(VIDEODIR_GLIDE)/Glide64/glide64_rdp.cpp
 
 # Glitch64
-SOURCES_C   += $(VIDEODIR_GLIDE)/Glitch64/glitch64_combiner.c \
-            $(VIDEODIR_GLIDE)/Glitch64/geometry.c \
-            $(VIDEODIR_GLIDE)/Glitch64/glitchmain.c \
-            $(VIDEODIR_GLIDE)/Glitch64/glitch64_textures.c
+SOURCES_CXX   += $(VIDEODIR_GLIDE)/Glitch64/glitch64_combiner.cpp \
+            $(VIDEODIR_GLIDE)/Glitch64/geometry.cpp \
+            $(VIDEODIR_GLIDE)/Glitch64/glitchmain.cpp \
+            $(VIDEODIR_GLIDE)/Glitch64/glitch64_textures.cpp
 endif
 
 ### Angrylion's renderer ###
