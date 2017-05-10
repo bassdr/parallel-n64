@@ -416,7 +416,7 @@ void glide64GetDllInfo ( PLUGIN_INFO * PluginInfo )
 {
    PluginInfo->Version = 0x0103;     // Set to 0x0103
    PluginInfo->Type  = PLUGIN_TYPE_GFX;  // Set to PLUGIN_TYPE_GFX
-   sprintf (PluginInfo->Name, "Glide64mk2 "G64_VERSION RELTIME);  // Name of the DLL
+   sprintf (PluginInfo->Name, "Glide64mk2 " G64_VERSION RELTIME);  // Name of the DLL
 
    // If DLL supports memory these memory options then set them to TRUE or FALSE
    //  if it does not support it

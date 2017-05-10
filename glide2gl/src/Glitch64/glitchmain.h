@@ -26,7 +26,7 @@
 #include <libretro.h>
 #include <boolean.h>
 
-extern retro_log_printf_t log_cb;
+extern "C" retro_log_printf_t log_cb;
 
 #define LOG_TO_STDOUT
 
