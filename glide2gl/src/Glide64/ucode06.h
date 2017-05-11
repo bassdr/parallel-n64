@@ -79,7 +79,7 @@ static void DrawDepthImage (const DRAWIMAGE *d)
    dst_width   = MIN((int)(src_width*scale_x_dst), (int)settings.scr_res_x);
    dst_height  = MIN((int)(src_height*scale_y_dst), (int)settings.scr_res_y);
    src         = (uint16_t*)(gfx_info.RDRAM+d->imagePtr);
-   dst         = (uint16_t*)malloc(dst_width * dst_height * sizeof(uint16_t));
+   dst         = new uint16_t[dst_width * dst_height];
 
    for (y = 0; y < dst_height; y++)
    {
@@ -95,7 +95,7 @@ static void DrawDepthImage (const DRAWIMAGE *d)
          FXFALSE,
          dst_width<<1,
          dst);
-   free(dst);
+   delete [] dst;
 }
 
 static void DrawImage (DRAWIMAGE *d)

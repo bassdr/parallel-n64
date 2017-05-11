@@ -84,16 +84,14 @@ do {                                                                            
   if (head) {                                                                    \
      unsigned _hf_bkt, _hf_hashv;                                                \
      HASH_FCN(keyptr,keylen, (head)->hh.tbl->num_buckets, _hf_hashv, _hf_bkt);   \
-     HASH_FIND_IN_BKT((head)->hh.tbl, hh, (head)->hh.tbl->buckets[ _hf_bkt ],  \
-           keyptr,keylen,out);                                      \
+     HASH_FIND_IN_BKT((head)->hh.tbl, hh, (head)->hh.tbl->buckets[ _hf_bkt ],    \
+           keyptr,keylen,out);                                                   \
   }                                                                              \
 } while (0)
 
 #define HASH_MAKE_TABLE(hh,head)                                                 \
 do {                                                                             \
-  (head)->hh.tbl = (UT_hash_table*)malloc(                                       \
-                  sizeof(UT_hash_table));                                        \
-  if (!((head)->hh.tbl))  { uthash_fatal( "out of memory"); }                    \
+  (head)->hh.tbl = new UT_hash_table;                                            \
   (head)->hh.tbl->num_buckets = HASH_INITIAL_NUM_BUCKETS;                        \
   (head)->hh.tbl->log2_num_buckets = HASH_INITIAL_NUM_BUCKETS_LOG2;              \
   (head)->hh.tbl->num_items = 0;                                                 \
@@ -103,9 +101,7 @@ do {                                                                            
   (head)->hh.tbl->nonideal_items = 0;                                            \
   (head)->hh.tbl->ineff_expands = 0;                                             \
   (head)->hh.tbl->noexpand = 0;                                                  \
-  (head)->hh.tbl->buckets = (UT_hash_bucket*)calloc(                             \
-          HASH_INITIAL_NUM_BUCKETS, sizeof(struct UT_hash_bucket));              \
-  if (! (head)->hh.tbl->buckets) { uthash_fatal( "out of memory"); }             \
+  (head)->hh.tbl->buckets = new UT_hash_bucket[HASH_INITIAL_NUM_BUCKETS];        \
 } while(0)
 
 #define HASH_ADD(hh,head,fieldname,keylen_in,add)                                \
@@ -164,8 +160,8 @@ do {                                                                            
 do {                                                                             \
     struct UT_hash_handle *_hd_hh_del;                                           \
     if ( ((delptr)->hh.prev == NULL) && ((delptr)->hh.next == NULL) )  {         \
-        free((head)->hh.tbl->buckets); \
-        free((head)->hh.tbl);                      \
+        delete [] (head)->hh.tbl->buckets;                                       \
+        delete (head)->hh.tbl;                                                   \
         head = NULL;                                                             \
     } else {                                                                     \
         unsigned _hd_bkt;                                                        \
@@ -482,9 +478,7 @@ do {                                                                            
     unsigned _he_bkt_i;                                                          \
     struct UT_hash_handle *_he_thh, *_he_hh_nxt;                                 \
     UT_hash_bucket *_he_newbkt      = NULL;                                      \
-    UT_hash_bucket *_he_new_buckets = (UT_hash_bucket*)calloc(                   \
-          2 * tbl->num_buckets, sizeof(UT_hash_bucket));                         \
-    if (!_he_new_buckets) { uthash_fatal( "out of memory"); }                    \
+    UT_hash_bucket *_he_new_buckets = new UT_hash_bucket[2 * tbl->num_buckets];  \
     tbl->ideal_chain_maxlen =                                                    \
        (tbl->num_items >> (tbl->log2_num_buckets+1)) +                           \
        ((tbl->num_items & ((tbl->num_buckets*2)-1)) ? 1 : 0);                    \
@@ -509,7 +503,7 @@ do {                                                                            
            _he_thh = _he_hh_nxt;                                                 \
         }                                                                        \
     }                                                                            \
-    free( tbl->buckets); \
+    delete [] tbl->buckets;                                                      \
     tbl->num_buckets *= 2;                                                       \
     tbl->log2_num_buckets++;                                                     \
     tbl->buckets = _he_new_buckets;                                              \
@@ -524,8 +518,8 @@ do {                                                                            
 #define HASH_CLEAR(hh,head)                                                      \
 do {                                                                             \
   if (head) {                                                                    \
-    free((head)->hh.tbl->buckets);      \
-    free((head)->hh.tbl);                          \
+    delete [] (head)->hh.tbl->buckets;                                           \
+    delete (head)->hh.tbl;                                                       \
     (head)=NULL;                                                                 \
   }                                                                              \
 } while(0)

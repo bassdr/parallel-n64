@@ -42,7 +42,7 @@ int glsl_support = 1;
 //Gonetz
 
 extern uint16_t *frameBuffer;
-static uint8_t  *buf;
+static uint8_t  *buf = nullptr;
 
 #ifdef EMSCRIPTEN
 GLuint glitch_vbo;
@@ -84,8 +84,8 @@ uint32_t grSstWinOpen(void)
    // allocate static texture names
    // the initial value should be big enough to support the maximal resolution
    glGenTextures(1, &default_texture);
-   frameBuffer = (uint16_t*)malloc(width * height * sizeof(uint16_t));
-   buf = (uint8_t*)malloc(width * height * 4 * sizeof(uint8_t));
+   frameBuffer = new uint16_t[width * height];
+   buf = new uint8_t[width * height * 4];
 #ifdef EMSCRIPTEN
    glGenBuffers(1, &glitch_vbo);
 #endif
@@ -122,18 +122,18 @@ uint32_t grSstWinOpen(void)
 int32_t grSstWinClose(uint32_t context)
 {
    if (frameBuffer)
-      free(frameBuffer);
+      delete [] frameBuffer;
 
    if (buf)
-      free(buf);
+      delete [] buf;
 
    glDeleteTextures(1, &default_texture);
 #ifdef EMSCRIPTEN
    glDeleteBuffers(1, &glitch_vbo);
 #endif
 
-   frameBuffer = NULL;
-   buf         = NULL;
+   frameBuffer = nullptr;
+   buf         = nullptr;
 
    free_geometry();
    free_combiners();

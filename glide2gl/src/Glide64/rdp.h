@@ -339,6 +339,15 @@ typedef struct
 
 struct RDP
 {
+   RDP():
+     vtx1(nullptr),
+     vtx2(nullptr),
+     vtxbuf(nullptr),
+     vtxbuf2(nullptr),
+     vtx(nullptr),
+     frame_buffers(nullptr)
+   {}
+
    uint32_t u_cull_mode;
    float vi_width;
    float vi_height;

@@ -63,8 +63,8 @@
 /* (x * y) >> 14 */
 #define IMUL14(x, y) ((((int64_t)x) * ((int64_t)y)) >> 14)
 
-static uint16_t *zLUT;
-uint16_t *frameBuffer;
+static uint16_t *zLUT = nullptr;
+uint16_t *frameBuffer = nullptr;
 
 extern int dzdx;
 
@@ -82,7 +82,7 @@ void ZLUT_init(void)
    if (zLUT)
       return;
 
-   zLUT = (uint16_t*)malloc(ZLUT_SIZE * sizeof(uint16_t));
+   zLUT = new uint16_t[ZLUT_SIZE];
 
    for(i = 0; i< ZLUT_SIZE; i++)
    {
@@ -104,8 +104,8 @@ void ZLUT_init(void)
 void ZLUT_release(void)
 {
    if (zLUT)
-      free(zLUT);
-   zLUT = NULL;
+      delete [] zLUT;
+   zLUT = nullptr;
 }
 
 

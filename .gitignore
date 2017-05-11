@@ -20,3 +20,8 @@ Release/
 **/*.sln
 **/*.vcxproj
 **/*.vcxproj.filters
+
+# ==========================
+# kdevelop files
+# ==========================
+*.kdev4

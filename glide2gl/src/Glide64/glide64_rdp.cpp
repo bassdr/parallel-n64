@@ -206,10 +206,14 @@ void rdp_new(void)
 {
    unsigned i;
    unsigned      cpu = 0;
-   rdp.vtx1          = (VERTEX*)calloc(256, sizeof(VERTEX));
-   rdp.vtx2          = (VERTEX*)calloc(256, sizeof(VERTEX));
-   rdp.vtx           = (VERTEX*)calloc(MAX_VTX, sizeof(VERTEX));
-   rdp.frame_buffers = (COLOR_IMAGE*)calloc(NUMTEXBUF+2, sizeof(COLOR_IMAGE));
+   rdp.vtx1          = new VERTEX[256];
+   memset (&rdp.vtx1, 0, sizeof(VERTEX)*256);
+   rdp.vtx2          = new VERTEX[256];
+   memset (&rdp.vtx2, 0, sizeof(VERTEX)*256);
+   rdp.vtx           = new VERTEX[MAX_VTX];
+   memset (&rdp.vtx, 0, sizeof(VERTEX)*MAX_VTX);
+   rdp.frame_buffers = new COLOR_IMAGE[NUMTEXBUF+2];
+   memset (&rdp.frame_buffers, 0, sizeof(COLOR_IMAGE)*(NUMTEXBUF+2));
 
    rdp.vtxbuf        = 0;
    rdp.vtxbuf2       = 0;
@@ -218,7 +222,8 @@ void rdp_new(void)
 
    for (i = 0; i < MAX_TMU; i++)
    {
-      rdp.cache[i] = (CACHE_LUT*)calloc(MAX_CACHE, sizeof(CACHE_LUT));
+      rdp.cache[i] = new CACHE_LUT[MAX_CACHE];
+      memset (&rdp.cache[i], 0, sizeof(CACHE_LUT)*MAX_CACHE);
       rdp.cur_cache[i]   = 0;
    }
 
@@ -244,29 +249,29 @@ void rdp_free(void)
    int i;
 
    if (rdp.vtx1)
-      free(rdp.vtx1);
-   rdp.vtx1           = NULL;
+      delete [] rdp.vtx1;
+   rdp.vtx1           = nullptr;
 
    if (rdp.vtx2)
-      free(rdp.vtx2);
-   rdp.vtx2           = NULL;
+      delete [] rdp.vtx2;
+   rdp.vtx2           = nullptr;
 
    for (i = 0; i < MAX_TMU; i++)
    {
       if (rdp.cache[i])
       {
-         free(rdp.cache[i]);
-         rdp.cache[i] = NULL;
+         delete [] rdp.cache[i];
+         rdp.cache[i] = nullptr;
       }
    }
 
    if (rdp.vtx)
-      free(rdp.vtx);
-   rdp.vtx           = NULL;
+      delete [] rdp.vtx;
+   rdp.vtx           = nullptr;
 
    if (rdp.frame_buffers)
-      free(rdp.frame_buffers);
-   rdp.frame_buffers = NULL;
+      delete [] rdp.frame_buffers;
+   rdp.frame_buffers = nullptr;
 
 }
 
@@ -1451,7 +1456,7 @@ static void rdp_setcolorimage(uint32_t w0, uint32_t w1)
                uint16_t c;
                int width         = cur_fb->width;
                int height        = cur_fb->height;
-               uint16_t *ptr_dst = calloc(width * height, sizeof(uint16_t));
+               uint16_t *ptr_dst = new uint16_t[width * height];
                uint16_t *ptr_src = (uint16_t*)(gfx_info.RDRAM + cur_fb->addr);
 
                for (y = 0; y < height; y++)
@@ -1471,7 +1476,7 @@ static void rdp_setcolorimage(uint32_t w0, uint32_t w1)
                      FXFALSE,
                      width << 1,
                      ptr_dst);
-               free(ptr_dst);
+               delete [] ptr_dst;
             }
          }
       }

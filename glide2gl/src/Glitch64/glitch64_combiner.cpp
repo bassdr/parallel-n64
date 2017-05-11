@@ -27,6 +27,8 @@
 #endif // _WIN32
 #include <math.h>
 
+#include <deque>
+
 #include "glide.h"
 #include "glitchmain.h"
 #include "../../libretro/libretro_private.h"
@@ -72,10 +74,9 @@ static int fcta[4],sourcea0[4],operanda0[4],sourcea1[4],operanda1[4],sourcea2[4]
 static int alpha_ref, alpha_func;
 bool alpha_test = 0;
 
-static shader_program_key *shader_programs = NULL;
-static shader_program_key *current_shader  = NULL;
+static std::deque<shader_program_key> shader_programs;
+static shader_program_key *current_shader  = nullptr;
 
-static int number_of_programs = 0;
 static int color_combiner_key;
 static int alpha_combiner_key;
 static int texture0_combiner_key;
@@ -287,31 +288,16 @@ void check_link(GLuint program)
 static void append_shader_program(shader_program_key *shader)
 {
    int curr_index;
-   int                   index = number_of_programs;
 
    if (current_shader)
       curr_index = current_shader->index;
 
-   shader->index = index;
-
-   if (!shader_programs)
-      shader_programs = (shader_program_key*)malloc(sizeof(shader_program_key));
-   else
-   {
-      shader_program_key *new_ptr = (shader_program_key*)
-         realloc(shader_programs, (index + 1) * sizeof(shader_program_key));
-      if (!new_ptr)
-         return;
-
-      shader_programs = new_ptr;
-   }
+   shader->index = shader_programs.size();
+   
+   shader_programs.push_back(*shader);
 
    if (current_shader)
       current_shader = &shader_programs[curr_index];
-
-   shader_programs[index] = *shader;
-
-   ++number_of_programs;
 }
 
 static void shader_bind_attributes(shader_program_key *shader)
@@ -379,13 +365,10 @@ void init_combiner(void)
 {
    shader_program_key shader;
 
-   if (shader_programs)
-      free(shader_programs);
+   shader_programs.clear();
 
-   number_of_programs = 0;
-   shader_programs    = NULL;
    current_shader     = NULL;
-   fragment_shader    = (char*)malloc(4096*2);
+   fragment_shader    = new char[4096*2];
    need_to_compile    = true;
 
    /* default shader */
@@ -515,23 +498,22 @@ void compile_shader(void)
 
    need_to_compile = 0;
 
-   for( i = 0; i < number_of_programs; i++)
+   for( auto & program : shader_programs)
    {
-      shader_program_key *program = &shader_programs[i];
-      if(program->color_combiner == color_combiner_key &&
-            program->alpha_combiner == alpha_combiner_key &&
-            program->texture0_combiner == texture0_combiner_key &&
-            program->texture1_combiner == texture1_combiner_key &&
-            program->texture0_combinera == texture0_combinera_key &&
-            program->texture1_combinera == texture1_combinera_key &&
-            program->fog_enabled == fog_enabled &&
-            program->chroma_enabled == chroma_enabled &&
-            program->dither_enabled == dither_enabled &&
-            program->three_point_filter0 == three_point_filter[0] &&
-            program->three_point_filter1 == three_point_filter[1])
+      if(program.color_combiner == color_combiner_key &&
+            program.alpha_combiner == alpha_combiner_key &&
+            program.texture0_combiner == texture0_combiner_key &&
+            program.texture1_combiner == texture1_combiner_key &&
+            program.texture0_combinera == texture0_combinera_key &&
+            program.texture1_combinera == texture1_combinera_key &&
+            program.fog_enabled == fog_enabled &&
+            program.chroma_enabled == chroma_enabled &&
+            program.dither_enabled == dither_enabled &&
+            program.three_point_filter0 == three_point_filter[0] &&
+            program.three_point_filter1 == three_point_filter[1])
       {
-         use_shader_program(program);
-         update_uniforms(program);
+         use_shader_program(&program);
+         update_uniforms(&program);
          return;
       }
    }
@@ -593,27 +575,18 @@ void compile_shader(void)
 
 void free_combiners(void)
 {
-   if (shader_programs)
+   for(auto & s : shader_programs)
    {
-      shader_program_key *s = shader_programs;
-
-      while (number_of_programs--)
-      {
-         if (glIsProgram(s->program_object))
-            glDeleteProgram(s->program_object);
-      }
-
-      free(shader_programs);
+      if (glIsProgram(s.program_object))
+         glDeleteProgram(s.program_object);
    }
+   shader_programs.clear();
 
    if (fragment_shader)
-      free(fragment_shader);
+      delete [] fragment_shader;
 
-   shader_programs = NULL;
    current_shader  = NULL;
    fragment_shader = NULL;
-
-   number_of_programs = 0;
 }
 
 void set_copy_shader(void)

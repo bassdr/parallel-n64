@@ -71,18 +71,18 @@ static void remove_tex(unsigned int idmin, unsigned int idmax)
    if (!count)
        return;
 
-   t = (GLuint*)malloc(count * sizeof(GLuint));
+   t = new GLuint[count];
    HASH_ITER(hh, list, current, tmp)
    {
       if (current->id >= idmin && current->id < idmax)
       {
          t[n++] = current->tex_id;
          HASH_DEL(list, current);
-         free(current);
+         delete current;
       }
    }
    glDeleteTextures(n, t);
-   free(t);
+   delete [] t;
 #ifdef LOG_TEXTUREMEM
    if (log_cb)
       log_cb(RETRO_LOG_DEBUG, "RMVTEX nbtex is now %d (%06x - %06x)\n", HASH_COUNT(list), idmin, idmax);
@@ -98,7 +98,7 @@ static void add_tex(unsigned int id)
 
    if (!entry)
    {
-      entry = malloc(sizeof(texlist));
+      entry = new texlist;
       entry->id = id;
       glGenTextures(1, &entry->tex_id);
       HASH_ADD_INT(list, id, entry);
