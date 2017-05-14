@@ -47,10 +47,6 @@
 #include "../../Graphics/RDP/gDP_state.h"
 #include "../../Graphics/RDP/RDP_state.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define NOT_TMU0	0x00
 #define NOT_TMU1	0x01
 #define NOT_TMU2	0x02
@@ -126,9 +122,5 @@ static INLINE uint16_t ror16(uint16_t value, uint16_t amount)
 }
 
 void apply_shading(void *data);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif  // ifndef Util_H

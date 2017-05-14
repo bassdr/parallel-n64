@@ -20,7 +20,7 @@ void GDPSetScissorC(uint32_t mode,
    {
       case GFX_GLIDE64:
 #if defined(HAVE_GLIDE64)
-         glide64gDPSetScissor(mode, ulx, uly, lrx, lry);
+         /* TODO/FIXME */
 #endif
          break;
       case GFX_GLN64:
@@ -57,7 +57,7 @@ void GDPLoadBlockC(uint32_t tile, uint32_t ul_s, uint32_t ul_t,
    {
       case GFX_GLIDE64:
 #ifdef HAVE_GLIDE64
-         glide64gDPLoadBlock(tile, ul_s, ul_t, lr_s, dxt);
+         /* TODO/FIXME */
 #endif
          break;
       case GFX_GLN64:

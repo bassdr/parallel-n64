@@ -26,6 +26,14 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 uint32_t encoding_crc32(uint32_t crc, const uint8_t *buf, size_t len);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

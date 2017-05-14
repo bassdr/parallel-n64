@@ -9,7 +9,7 @@
 #include "ShaderCombiner.h"
 #include "VI.h"
 
-struct FrameBufferInfo frameBuffer;
+static struct FrameBufferInfo frameBuffer;
 CachedTexture *g_RDRAMtoFB;
 
 void FrameBuffer_Init(void)

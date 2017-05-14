@@ -234,7 +234,7 @@ void vbo_enable(void)
    vbuf_drawing = was_drawing;
 }
 
-void vbo_disable(void)
+extern "C" void vbo_disable(void)
 {
    vbo_draw();
    vbuf_enabled = false;

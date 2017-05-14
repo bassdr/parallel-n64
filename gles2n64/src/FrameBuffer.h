@@ -42,8 +42,6 @@ struct FrameBufferInfo
 	int numBuffers;
 };
 
-extern struct FrameBufferInfo frameBuffer;
-
 void FrameBuffer_Init(void);
 void FrameBuffer_Destroy(void);
 void FrameBuffer_CopyToRDRAM( uint32_t _address );

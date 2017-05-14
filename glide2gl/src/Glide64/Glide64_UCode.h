@@ -115,14 +115,6 @@
 #define UCODE_ODT_PROTO                      0x9551177b
 #define UCODE_LAST_LEGION_UX                 0xff372492
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void microcheck(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

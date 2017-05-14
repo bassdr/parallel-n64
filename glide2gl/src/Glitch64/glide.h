@@ -5,10 +5,6 @@
 #include <boolean.h>
 #include <glsm/glsmsym.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*
 ** -----------------------------------------------------------------------
 ** TYPE DEFINITIONS
@@ -367,7 +363,7 @@ void grBufferSwap(uint32_t swap_interval);
  * these are public just to allow reuse of the vertex cache vbo in some
  * specific places. you probably do not want to use them. */
 void vbo_enable();
-void vbo_disable();
+extern "C" void vbo_disable();
 void vbo_bind();
 void vbo_unbind();
 void vbo_buffer_data(void *data, size_t size);
@@ -659,9 +655,5 @@ extern void grTexChromaModeExt(int32_t tmu, int32_t mode);
 
 extern int width, height;
 extern float fogStart, fogEnd;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* __GLIDE_H__ */

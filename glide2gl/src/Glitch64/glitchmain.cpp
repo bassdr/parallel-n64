@@ -29,6 +29,8 @@
 #include "../Glide64/rdp.h"
 #include "../../libretro/libretro_private.h"
 
+#include "../Glide64/Framebuffer_glide64.h"
+
 #include <gfx/gl_capabilities.h>
 
 extern retro_environment_t environ_cb;
@@ -61,7 +63,7 @@ uint32_t grSstWinOpen(void)
    bool ret;
    struct retro_variable var = { NAME_PREFIX "-screensize", 0 };
 
-   if (frameBuffer)
+   if (Glide64::frameBuffer)
       grSstWinClose(0);
 
    ret = environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var);
@@ -84,7 +86,7 @@ uint32_t grSstWinOpen(void)
    // allocate static texture names
    // the initial value should be big enough to support the maximal resolution
    glGenTextures(1, &default_texture);
-   frameBuffer = new uint16_t[width * height];
+   Glide64::frameBuffer = new uint16_t[width * height];
    buf = new uint8_t[width * height * 4];
 #ifdef EMSCRIPTEN
    glGenBuffers(1, &glitch_vbo);
@@ -121,8 +123,8 @@ uint32_t grSstWinOpen(void)
 
 int32_t grSstWinClose(uint32_t context)
 {
-   if (frameBuffer)
-      delete [] frameBuffer;
+   if (Glide64::frameBuffer)
+      delete [] Glide64::frameBuffer;
 
    if (buf)
       delete [] buf;
@@ -132,7 +134,7 @@ int32_t grSstWinClose(uint32_t context)
    glDeleteBuffers(1, &glitch_vbo);
 #endif
 
-   frameBuffer = nullptr;
+   Glide64::frameBuffer = nullptr;
    buf         = nullptr;
 
    free_geometry();
@@ -150,7 +152,7 @@ int32_t grLfbLock( int32_t type, int32_t buffer, int32_t writeMode,
 {
    info->origin        = origin;
    info->strideInBytes = width * ((writeMode == GR_LFBWRITEMODE_888) ? 4 : 2);
-   info->lfbPtr        = frameBuffer;
+   info->lfbPtr        = Glide64::frameBuffer;
    info->writeMode     = writeMode;
 
    if (writeMode == GR_LFBWRITEMODE_565)
@@ -162,7 +164,7 @@ int32_t grLfbLock( int32_t type, int32_t buffer, int32_t writeMode,
       {
          for (i=0; i < width; i++)
          {
-            frameBuffer[(height-j-1)*width+i] =
+            Glide64::frameBuffer[(height-j-1)*width+i] =
                ((buf[j*width*4+i*4+0] >> 3) << 11) |
                ((buf[j*width*4+i*4+1] >> 2) <<  5) |
                (buf[j*width*4+i*4+2] >> 3);
@@ -186,7 +188,7 @@ int32_t grLfbReadRegion( int32_t src_buffer,
    {
       for (i=0; i<src_width; i++)
       {
-         frameBuffer[j*(dst_stride/2)+i] =
+         Glide64::frameBuffer[j*(dst_stride/2)+i] =
             ((buf[(src_height-j-1)*src_width*4+i*4+0] >> 3) << 11) |
             ((buf[(src_height-j-1)*src_width*4+i*4+1] >> 2) <<  5) |
             (buf[(src_height-j-1)*src_width*4+i*4+2] >> 3);

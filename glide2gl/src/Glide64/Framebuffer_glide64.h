@@ -48,10 +48,6 @@
 
 #include "../Glitch64/glide.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 struct vertexi
 {
    int x,y;       // Screen position in 16:16 bit fixed point
@@ -95,8 +91,9 @@ void CopyFrameBuffer (int32_t buffer);
 
 void drawViRegBG(void);
 
-#ifdef __cplusplus
+namespace Glide64
+{
+extern uint16_t *frameBuffer;
 }
-#endif
 
 #endif  // #ifndef FBtoSCREEN_H

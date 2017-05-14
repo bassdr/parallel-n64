@@ -47,7 +47,7 @@
 #include "Framebuffer_glide64.h"
 #include "../../../Graphics/GBI.h"
 #include "../../Graphics/RDP/gDP_state.h"
-#include "../../Graphics/RSP/gSP_funcs_C.h"
+#include "../../Graphics/RSP/gSP_funcs.h"
 #include "../../Graphics/RSP/gSP_state.h"
 #include "../../Graphics/RSP/RSP_state.h"
 

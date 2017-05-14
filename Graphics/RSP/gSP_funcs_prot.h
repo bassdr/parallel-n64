@@ -5,10 +5,6 @@
 
 #include <boolean.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Glide64 prototypes */
 void glide64gSPMatrix( uint32_t matrix, uint8_t param );
 void glide64gSPClearGeometryMode (uint32_t mode);
@@ -60,13 +56,6 @@ void glide64gSPCIVertex(uint32_t v, uint32_t n, uint32_t v0);
 void glide64gSPSetVertexColorBase(uint32_t base);
 void glide64gSPSetDMATexOffset(uint32_t addr);
 
-void gln64gSPDlistCount(uint32_t count, uint32_t v);
-
-#ifdef __cplusplus
-}
-#endif
-
-
 #ifndef GLIDEN64
 #ifdef __cplusplus
 extern "C" {
@@ -74,6 +63,7 @@ extern "C" {
 #endif
 
 /* GLN64 prototypes */
+void gln64gSPDlistCount(uint32_t count, uint32_t v);
 extern void (*gln64gSPLightVertex)(void *data);
 void gln64gSPSegment(int32_t seg, int32_t base);
 void gln64gSPClipVertex(uint32_t v);

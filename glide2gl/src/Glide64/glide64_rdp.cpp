@@ -51,11 +51,13 @@
 #include "../../libretro/libretro_private.h"
 #include "../../Graphics/GBI.h"
 #include "../../Graphics/HLE/Microcode/Fast3D.h"
-#include "../../Graphics/RDP/gDP_funcs_C.h"
-#include "../../Graphics/RSP/gSP_funcs_C.h"
+#include "../../Graphics/RDP/gDP_funcs.h"
+#include "../../Graphics/RSP/gSP_funcs.h"
 #include "../../Graphics/RDP/RDP_state.h"
 #include "../../Graphics/RDP/gDP_state.h"
 #include "../../Graphics/RSP/RSP_state.h"
+
+void (*_gSPVertex)(uint32_t addr, uint32_t n, uint32_t v0);
 
 /* angrylion's macro, helps to cut overflowed values. */
 #define SIGN16(x) (int16_t)(x)
@@ -324,8 +326,9 @@ int CI_SET = true;
 uint32_t swapped_addr = 0;
 int depth_buffer_fog;
 
-extern bool frame_dupe;
+extern "C" bool frame_dupe;
 
+extern "C"
 void glide64ProcessDList(void)
 {
   uint32_t dlist_start, dlist_length, a;
@@ -1583,7 +1586,7 @@ val                     val
 size            1 = uint8_t, 2 = uint16_t, 4 = uint32_t
 output:   none
 *******************************************************************/
-
+extern "C"
 void glide64FBRead(uint32_t addr)
 {
   uint32_t a;
@@ -1644,6 +1647,7 @@ val                     val
 size            1 = uint8_t, 2 = uint16_t, 4 = uint32_t
 output:   none
 *******************************************************************/
+extern "C"
 void glide64FBWrite(uint32_t addr, uint32_t size)
 {
   uint32_t a, shift_l, shift_r;
@@ -1696,7 +1700,7 @@ filled in by this function
 output:   Values are return in the FrameBufferInfo structure
 Plugin can return up to 6 frame buffer info
 ************************************************************************/
-///*
+extern "C"
 void glide64FBGetFrameBufferInfo(void *p)
 {
    int i;
@@ -2191,6 +2195,7 @@ processed. (Low level GFX list)
 input:    none
 output:   none
 *******************************************************************/
+extern "C"
 void glide64ProcessRDPList(void)
 {
    glide64ProcessRDPList_restorestate();

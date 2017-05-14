@@ -48,7 +48,7 @@
 #include "Gfx_1.3.h"
 #include "../Glitch64/glide.h"
 
-void (*_gSPVertex)(uint32_t addr, uint32_t n, uint32_t v0);
+extern void (*_gSPVertex)(uint32_t addr, uint32_t n, uint32_t v0);
 
 extern uint32_t frame_count; // frame counter
 extern uint32_t gfx_plugin_accuracy;
@@ -565,7 +565,7 @@ void load_palette (uint32_t addr, uint16_t start, uint16_t count);
 void newSwapBuffers(void);
 extern void rdp_setfuncs(void);
 
-void ChangeSize(void);
+extern "C" void ChangeSize(void);
 void rdp_free(void);
 void rdp_new(void);
 void rdp_reset(void);

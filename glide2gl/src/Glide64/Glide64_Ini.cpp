@@ -14,8 +14,8 @@ extern SETTINGS settings;
 
 extern retro_environment_t environ_cb;
 
-extern void update_variables(bool startup);
-extern void glide_set_filtering(unsigned value);
+extern "C" void update_variables(bool startup);
+extern "C" void glide_set_filtering(unsigned value);
 
 void ReadSettings(void)
 {

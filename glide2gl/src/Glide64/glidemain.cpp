@@ -48,11 +48,11 @@
 #include "GlideExtensions.h"
 #include "api/libretro.h"
 
-#include "../../../Graphics/RDP/gDP_funcs_C.h"
+#include "../../../Graphics/RDP/gDP_funcs.h"
 
-extern void CRC_BuildTable();
-extern retro_log_printf_t log_cb;
-extern uint32_t screen_aspectmodehint;
+extern "C" void CRC_BuildTable();
+extern "C" retro_log_printf_t log_cb;
+extern "C" uint32_t screen_aspectmodehint;
 
 #if defined(__GNUC__)
 #include <sys/time.h>
@@ -88,7 +88,7 @@ uint32_t   offset_textures = 0;
 
 // SOME FUNCTION DEFINITIONS 
 
-void glide_set_filtering(unsigned value);
+extern "C" void glide_set_filtering(unsigned value);
 
 static void (*l_DebugCallback)(void *, int, const char *) = NULL;
 static void *l_DebugCallContext = NULL;
@@ -151,7 +151,7 @@ static void _ChangeSize(void)
    g_gdp.flags |= UPDATE_VIEWPORT | UPDATE_SCISSOR;
 }
 
-void ChangeSize(void)
+extern "C" void ChangeSize(void)
 {
    float offset_y;
 
@@ -241,7 +241,7 @@ void guLoadTextures(void)
    offset_textures = tbuf_size + 16;
 }
 
-int glide64InitGfx(void)
+extern "C" int glide64InitGfx(void)
 {
    rdp_reset ();
 
@@ -289,7 +289,7 @@ void ReleaseGfx(void)
 }
 
 // new API code begins here!
-
+extern "C"
 void glide64ReadScreen2(void *dest, int *width, int *height, int front)
 {
    GrLfbInfo_t info;
@@ -344,6 +344,7 @@ m64p_error glide64PluginShutdown(void)
    return M64ERR_SUCCESS;
 }
 
+extern "C"
 m64p_error glide64PluginGetVersion(m64p_plugin_type *PluginType,
       int *PluginVersion, int *APIVersion, const char **PluginNamePtr, int *Capabilities)
 {
@@ -374,7 +375,7 @@ change the screen to window mode and vice vesa.
 input:    none
 output:   none
 *******************************************************************/
-//#warning ChangeWindow unimplemented
+extern "C"
 void glide64ChangeWindow (void)
 {
 }
@@ -386,6 +387,7 @@ down allowing the dll to de-initialise.
 input:    none
 output:   none
 *******************************************************************/
+extern "C"
 void glide64CloseDLL (void)
 {
    ZLUT_release();
@@ -440,7 +442,7 @@ To generate an interrupt set the appropriate bit in MI_INTR_REG
 and then call the function CheckInterrupts to tell the emulator
 that there is a waiting interrupt.
 *******************************************************************/
-
+extern "C"
 int glide64InitiateGFX (GFX_INFO Gfx_Info)
 {
    char name[21] = "DEFAULT";
@@ -476,6 +478,7 @@ ypos - y-coordinate of the upper-left corner of the
 client area of the window.
 output:   none
 *******************************************************************/
+extern "C"
 void glide64MoveScreen (int xpos, int ypos)
 {
 }
@@ -486,6 +489,7 @@ Purpose:  This function is called when a rom is closed.
 input:    none
 output:   none
 *******************************************************************/
+extern "C"
 void glide64RomClosed (void)
 {
    romopen = false;
@@ -511,6 +515,7 @@ emulation thread)
 input:    none
 output:   none
 *******************************************************************/
+extern "C"
 int glide64RomOpen (void)
 {
    int i;
@@ -600,11 +605,13 @@ output:   none
 *******************************************************************/
 bool no_dlist = true;
 
+extern "C"
 void glide64ShowCFB (void)
 {
    no_dlist = true;
 }
 
+extern "C"
 void glide64SetRenderingCallback(void (*callback)(int))
 {
 }
@@ -619,8 +626,9 @@ output:   none
 *******************************************************************/
 uint32_t update_screen_count = 0;
 
-void retro_return(bool a);
+extern "C" void retro_return(bool a);
 
+extern "C"
 void glide64UpdateScreen (void)
 {
    bool forced_update = false;
@@ -668,7 +676,7 @@ void glide64UpdateScreen (void)
 
 uint32_t curframe = 0;
 extern int need_to_compile;
-void glide_set_filtering(unsigned value)
+extern "C" void glide_set_filtering(unsigned value)
 {
 	if(settings.filtering != value)
    {
@@ -715,6 +723,7 @@ ViStatus registers value has been changed.
 input:    none
 output:   none
 *******************************************************************/
+extern "C"
 void glide64ViStatusChanged(void)
 {
 }
@@ -726,6 +735,7 @@ ViWidth registers value has been changed.
 input:    none
 output:   none
 *******************************************************************/
-void  glide64ViWidthChanged(void)
+extern "C"
+void glide64ViWidthChanged(void)
 {
 }

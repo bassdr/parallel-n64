@@ -3,10 +3,6 @@
 
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Glide64 prototypes */
 void glide64gDPTriangle(uint32_t w0, uint32_t w1, int shade, int texture, int zbuffer);
 void glide64gSPClipRatio(uint32_t r);
@@ -38,11 +34,6 @@ void glide64gDPSetTileSize(uint32_t tile, uint32_t uls, uint32_t ult,
 void glide64gDPSetTextureImage(int32_t fmt, int32_t siz,
    int32_t width, int32_t addr);
 void glide64gDPFillRectangle(uint32_t ul_x, uint32_t ul_y, uint32_t lr_x, uint32_t lr_y);
-
-#ifdef __cplusplus
-}
-#endif
-
 
 /* GLN64 prototypes */
 #ifndef GLIDEN64

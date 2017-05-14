@@ -6,10 +6,6 @@
 #include "Util.h"
 #include "TexLoad.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 extern int CI_SET;
 extern uint32_t swapped_addr;
 
@@ -19,7 +15,3 @@ void glide64gDPLoadBlock( uint32_t tile, uint32_t ul_s, uint32_t ul_t,
       uint32_t lr_s, uint32_t dxt );
 void glide64gDPLoadTile(uint32_t tile, uint32_t ul_s, uint32_t ul_t,
       uint32_t lr_s, uint32_t lr_t);
-
-#ifdef __cplusplus
-}
-#endif
