@@ -209,13 +209,13 @@ void rdp_new(void)
    unsigned i;
    unsigned      cpu = 0;
    rdp.vtx1          = new VERTEX[256];
-   memset (&rdp.vtx1, 0, sizeof(VERTEX)*256);
+   memset (rdp.vtx1, 0, sizeof(VERTEX)*256);
    rdp.vtx2          = new VERTEX[256];
-   memset (&rdp.vtx2, 0, sizeof(VERTEX)*256);
+   memset (rdp.vtx2, 0, sizeof(VERTEX)*256);
    rdp.vtx           = new VERTEX[MAX_VTX];
-   memset (&rdp.vtx, 0, sizeof(VERTEX)*MAX_VTX);
+   memset (rdp.vtx, 0, sizeof(VERTEX)*MAX_VTX);
    rdp.frame_buffers = new COLOR_IMAGE[NUMTEXBUF+2];
-   memset (&rdp.frame_buffers, 0, sizeof(COLOR_IMAGE)*(NUMTEXBUF+2));
+   memset (rdp.frame_buffers, 0, sizeof(COLOR_IMAGE)*(NUMTEXBUF+2));
 
    rdp.vtxbuf        = 0;
    rdp.vtxbuf2       = 0;
