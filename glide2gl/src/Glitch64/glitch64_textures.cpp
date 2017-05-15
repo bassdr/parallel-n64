@@ -68,6 +68,10 @@ static void remove_tex(unsigned int idmin, unsigned int idmax)
       {
          t[n++] = std::move(current->second);
          current = texlist.erase(current);
+         if(current == texlist.end())
+         {
+           break;
+         }
       }
    }
    glDeleteTextures(n, t);
