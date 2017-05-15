@@ -116,7 +116,6 @@ uint32_t grSstWinOpen(void)
 
    init_geometry();
    init_combiner();
-   init_textures();
 
    return 1;
 }

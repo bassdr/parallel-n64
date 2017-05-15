@@ -65,7 +65,6 @@ void set_depth_shader(void);
 #define GL_GLEXT_PROTOTYPES
 #include <glsm/glsmsym.h>
 
-void init_textures(void);
 void free_textures(void);
 
 void init_geometry(void);

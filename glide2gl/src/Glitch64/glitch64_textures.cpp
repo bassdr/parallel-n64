@@ -22,7 +22,8 @@
 #include <stdlib.h>
 #include "glide.h"
 #include "glitchmain.h"
-#include "uthash.h"
+
+#include <unordered_map>
 
 /* Napalm extensions to GrTextureFormat_t */
 #define GR_TEXFMT_ARGB_8888               0x12
@@ -49,36 +50,24 @@ wrap_t[2] = { GL_REPEAT, GL_REPEAT };
 
 unsigned char *filter(unsigned char *source, int width, int height, int *width2, int *height2);
 
-typedef struct _texlist
-{
-   unsigned int id;
-   GLuint tex_id;
-   UT_hash_handle hh;
-} texlist;
-
-static texlist *list = NULL;
+static std::unordered_map<unsigned int, GLuint> texlist;
 
 //#define LOG_TEXTUREMEM 1
 
 static void remove_tex(unsigned int idmin, unsigned int idmax)
 {
-   GLuint *t;
    unsigned int n = 0;
-   texlist *current, *tmp;
 
-   unsigned count = HASH_COUNT(list);
-
-   if (!count)
+   if (texlist.empty())
        return;
 
-   t = new GLuint[count];
-   HASH_ITER(hh, list, current, tmp)
+   auto t = new GLuint[texlist.size()];
+   for(auto current = texlist.begin(); current != texlist.end(); ++current)
    {
-      if (current->id >= idmin && current->id < idmax)
+      if (current->first >= idmin && current->first < idmax)
       {
-         t[n++] = current->tex_id;
-         HASH_DEL(list, current);
-         delete current;
+         t[n++] = std::move(current->second);
+         current = texlist.erase(current);
       }
    }
    glDeleteTextures(n, t);
@@ -92,16 +81,13 @@ static void remove_tex(unsigned int idmin, unsigned int idmax)
 
 static void add_tex(unsigned int id)
 {
-   texlist *entry = nullptr;
-   
-   HASH_FIND_INT(list, &id, entry);
+   auto entry = texlist.find(id);
 
-   if (!entry)
+   if (entry == texlist.end())
    {
-      entry = new texlist;
-      entry->id = id;
-      glGenTextures(1, &entry->tex_id);
-      HASH_ADD_INT(list, id, entry);
+      GLuint newTexId;
+      glGenTextures(1, &newTexId);
+      texlist.emplace(id, std::move(newTexId));
    }
 
 #ifdef LOG_TEXTUREMEM
@@ -112,11 +98,9 @@ static void add_tex(unsigned int id)
 
 static GLuint get_tex_id(unsigned int id)
 {
-   texlist *entry;
+   auto entry = texlist.find(id);
 
-   HASH_FIND_INT(list, &id, entry);
-
-   if (!entry)
+   if (entry == texlist.end())
    {
 #ifdef LOG_TEXTUREMEM
       if (log_cb)
@@ -125,12 +109,7 @@ static GLuint get_tex_id(unsigned int id)
       return 0;
    }
 
-   return entry->tex_id;
-}
-
-void init_textures(void)
-{
-   list = NULL;
+   return entry->second;
 }
 
 void free_textures(void)
