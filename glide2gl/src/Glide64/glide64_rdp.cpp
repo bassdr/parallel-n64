@@ -36,7 +36,8 @@
 //
 //****************************************************************
 
-#include <math.h>
+#include <cmath>
+#include <cstring>
 #include <encodings/crc32.h>
 #include "Gfx_1.3.h"
 #include "3dmath.h"
@@ -1460,6 +1461,7 @@ static void rdp_setcolorimage(uint32_t w0, uint32_t w1)
                int width         = cur_fb->width;
                int height        = cur_fb->height;
                uint16_t *ptr_dst = new uint16_t[width * height];
+               std::memset(ptr_dst, 0, sizeof(uint16_t) * width * height);
                uint16_t *ptr_src = (uint16_t*)(gfx_info.RDRAM + cur_fb->addr);
 
                for (y = 0; y < height; y++)
