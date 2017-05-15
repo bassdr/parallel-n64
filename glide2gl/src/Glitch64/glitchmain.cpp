@@ -158,22 +158,22 @@ int32_t grLfbLock( int32_t type, int32_t buffer, int32_t writeMode,
 
    if (writeMode == GR_LFBWRITEMODE_565)
    {
-      signed i, j;
-
       std::deque<std::thread> threads;
       glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
-      for (j=0; j < height; j++)
+      for (signed j=0; j < height; j++)
       {
-         for (i=0; i < width; i++)
+         threads.push_back(std::thread([j](uint16_t * fb, uint8_t const* const buf)
          {
-            threads.push_back(std::thread([i,j,&buf,&frameBuffer]()
+            for (signed i=0; i < width; i++)
             {
-              Glide64::frameBuffer[(height-j-1)*width+i] =
-                ((buf[j*width*4+i*4+0] >> 3) << 11) |
-                ((buf[j*width*4+i*4+1] >> 2) <<  5) |
-                (buf[j*width*4+i*4+2] >> 3);
-            }));
-         }
+
+               fb[(height-j-1)*width+i] =
+                 ((buf[j*width*4+i*4+0] >> 3) << 11) |
+                 ((buf[j*width*4+i*4+1] >> 2) <<  5) |
+                 (buf[j*width*4+i*4+2] >> 3);
+            } 
+              
+         }, Glide64::frameBuffer, buf));
       }
       
       for(auto & thread : threads)
