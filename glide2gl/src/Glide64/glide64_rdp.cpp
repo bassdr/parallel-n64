@@ -225,7 +225,7 @@ void rdp_new(void)
    for (i = 0; i < MAX_TMU; i++)
    {
       rdp.cache[i] = new CACHE_LUT[MAX_CACHE];
-      memset (&rdp.cache[i], 0, sizeof(CACHE_LUT)*MAX_CACHE);
+      memset (rdp.cache[i], 0, sizeof(CACHE_LUT)*MAX_CACHE);
       rdp.cur_cache[i]   = 0;
    }
 

@@ -92,7 +92,7 @@ static void remove_tex(unsigned int idmin, unsigned int idmax)
 
 static void add_tex(unsigned int id)
 {
-   texlist *entry;
+   texlist *entry = nullptr;
    
    HASH_FIND_INT(list, &id, entry);
 

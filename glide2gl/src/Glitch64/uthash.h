@@ -80,7 +80,7 @@ typedef unsigned char uint8_t;
 
 #define HASH_FIND(hh,head,keyptr,keylen,out)                                     \
 do {                                                                             \
-  out=NULL;                                                                      \
+  out=nullptr;                                                                   \
   if (head) {                                                                    \
      unsigned _hf_bkt, _hf_hashv;                                                \
      HASH_FCN(keyptr,keylen, (head)->hh.tbl->num_buckets, _hf_hashv, _hf_bkt);   \

@@ -93,7 +93,7 @@ NODE *cachelut[65536];
 
 static void AddToList (NODE **list, uint32_t crc, uintptr_t data, int tmu, int number)
 {
-   NODE *node = (NODE*)malloc(sizeof(NODE));
+   NODE *node = new NODE;
    node->crc = crc;
    node->data = data;
    node->tmu = tmu;
@@ -109,7 +109,7 @@ static void DeleteList (NODE **list)
    while (*list)
    {
       NODE *next = (*list)->pNext;
-      free(*list);
+      delete *list;
       *list = next;
    }
 }
