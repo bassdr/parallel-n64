@@ -463,7 +463,7 @@ ifeq ($(findstring Haiku,$(UNAME)),)
    LDFLAGS += -lm
 endif
 
-LDFLAGS    += $(fpic)
+LDFLAGS    += $(fpic) -lpthread
 
 ifeq ($(platform), theos_ios)
 COMMON_FLAGS := -DIOS $(COMMON_DEFINES) $(INCFLAGS) -I$(THEOS_INCLUDE_PATH) -Wno-error

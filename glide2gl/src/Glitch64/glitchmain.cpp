@@ -18,12 +18,14 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <stdint.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
+#include <cstdint>
+#include <cstdarg>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+#include <cmath>
+#include <thread>
+#include <deque>
 #include "glide.h"
 #include "glitchmain.h"
 #include "../Glide64/rdp.h"
@@ -158,16 +160,25 @@ int32_t grLfbLock( int32_t type, int32_t buffer, int32_t writeMode,
    {
       signed i, j;
 
+      std::deque<std::thread> threads;
       glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
       for (j=0; j < height; j++)
       {
          for (i=0; i < width; i++)
          {
-            Glide64::frameBuffer[(height-j-1)*width+i] =
-               ((buf[j*width*4+i*4+0] >> 3) << 11) |
-               ((buf[j*width*4+i*4+1] >> 2) <<  5) |
-               (buf[j*width*4+i*4+2] >> 3);
+            threads.push_back(std::thread([i,j,&buf,&frameBuffer]()
+            {
+              Glide64::frameBuffer[(height-j-1)*width+i] =
+                ((buf[j*width*4+i*4+0] >> 3) << 11) |
+                ((buf[j*width*4+i*4+1] >> 2) <<  5) |
+                (buf[j*width*4+i*4+2] >> 3);
+            }));
          }
+      }
+      
+      for(auto & thread : threads)
+      {
+        thread.join();
       }
    }
 
