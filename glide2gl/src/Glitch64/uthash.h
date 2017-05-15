@@ -24,7 +24,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef UTHASH_H
 #define UTHASH_H 
 
-#include <cstring>   /* memcmp,strlen,memset */
+#include <string.h>   /* memcmp,strlen */
 #include <stddef.h>   /* ptrdiff_t */
 #include <stdlib.h>   /* exit() */
 
@@ -80,18 +80,20 @@ typedef unsigned char uint8_t;
 
 #define HASH_FIND(hh,head,keyptr,keylen,out)                                     \
 do {                                                                             \
-  out=nullptr;                                                                   \
+  out=NULL;                                                                      \
   if (head) {                                                                    \
      unsigned _hf_bkt, _hf_hashv;                                                \
      HASH_FCN(keyptr,keylen, (head)->hh.tbl->num_buckets, _hf_hashv, _hf_bkt);   \
-     HASH_FIND_IN_BKT((head)->hh.tbl, hh, (head)->hh.tbl->buckets[ _hf_bkt ],    \
-           keyptr,keylen,out);                                                   \
+     HASH_FIND_IN_BKT((head)->hh.tbl, hh, (head)->hh.tbl->buckets[ _hf_bkt ],  \
+           keyptr,keylen,out);                                      \
   }                                                                              \
 } while (0)
 
 #define HASH_MAKE_TABLE(hh,head)                                                 \
 do {                                                                             \
-  (head)->hh.tbl = new UT_hash_table;                                            \
+  (head)->hh.tbl = (UT_hash_table*)malloc(                                       \
+                  sizeof(UT_hash_table));                                        \
+  if (!((head)->hh.tbl))  { uthash_fatal( "out of memory"); }                    \
   (head)->hh.tbl->num_buckets = HASH_INITIAL_NUM_BUCKETS;                        \
   (head)->hh.tbl->log2_num_buckets = HASH_INITIAL_NUM_BUCKETS_LOG2;              \
   (head)->hh.tbl->num_items = 0;                                                 \
@@ -101,8 +103,9 @@ do {                                                                            
   (head)->hh.tbl->nonideal_items = 0;                                            \
   (head)->hh.tbl->ineff_expands = 0;                                             \
   (head)->hh.tbl->noexpand = 0;                                                  \
-  (head)->hh.tbl->buckets = new UT_hash_bucket[HASH_INITIAL_NUM_BUCKETS];        \
-  std::memset((head)->hh.tbl->buckets, 0, sizeof(UT_hash_bucket) * HASH_INITIAL_NUM_BUCKETS); \
+  (head)->hh.tbl->buckets = (UT_hash_bucket*)calloc(                             \
+          HASH_INITIAL_NUM_BUCKETS, sizeof(struct UT_hash_bucket));              \
+  if (! (head)->hh.tbl->buckets) { uthash_fatal( "out of memory"); }             \
 } while(0)
 
 #define HASH_ADD(hh,head,fieldname,keylen_in,add)                                \
@@ -110,9 +113,9 @@ do {                                                                            
 
 #define HASH_REPLACE(hh,head,fieldname,keylen_in,add,replaced)                   \
 do {                                                                             \
-  replaced=nullptr;                                                              \
+  replaced=NULL;                                                                 \
   HASH_FIND(hh,head,&((add)->fieldname),keylen_in,replaced);                     \
-  if (replaced!=nullptr) {                                                       \
+  if (replaced!=NULL) {                                                          \
      HASH_DELETE(hh,head,replaced);                                              \
   };                                                                             \
   HASH_ADD(hh,head,fieldname,keylen_in,add);                                     \
@@ -121,12 +124,12 @@ do {                                                                            
 #define HASH_ADD_KEYPTR(hh,head,keyptr,keylen_in,add)                            \
 do {                                                                             \
  unsigned _ha_bkt;                                                               \
- (add)->hh.next = nullptr;                                                       \
+ (add)->hh.next = NULL;                                                          \
  (add)->hh.key = (char*)(keyptr);                                                \
  (add)->hh.keylen = (unsigned)(keylen_in);                                       \
  if (!(head)) {                                                                  \
     head = (add);                                                                \
-    (head)->hh.prev = nullptr;                                                   \
+    (head)->hh.prev = NULL;                                                      \
     HASH_MAKE_TABLE(hh,head);                                                    \
  } else {                                                                        \
     (head)->hh.tbl->tail->next = (add);                                          \
@@ -160,10 +163,10 @@ do {                                                                            
 #define HASH_DELETE(hh,head,delptr)                                              \
 do {                                                                             \
     struct UT_hash_handle *_hd_hh_del;                                           \
-    if ( ((delptr)->hh.prev == nullptr) && ((delptr)->hh.next == nullptr) )  {   \
-        delete [] (head)->hh.tbl->buckets;                                       \
-        delete (head)->hh.tbl;                                                   \
-        head = nullptr;                                                          \
+    if ( ((delptr)->hh.prev == NULL) && ((delptr)->hh.next == NULL) )  {         \
+        free((head)->hh.tbl->buckets); \
+        free((head)->hh.tbl);                      \
+        head = NULL;                                                             \
     } else {                                                                     \
         unsigned _hd_bkt;                                                        \
         _hd_hh_del = &((delptr)->hh);                                            \
@@ -284,7 +287,7 @@ do {                                                                            
   unsigned char *_hj_key=(unsigned char*)(key);                                  \
   hashv = 0xfeedbeef;                                                            \
   _hj_i = _hj_j = 0x9e3779b9;                                                    \
-  _hj_k = (unsigned)(keylen);                                                    \
+  _hj_k = (unsigned)(keylen);                                                      \
   while (_hj_k >= 12) {                                                          \
     _hj_i +=    (_hj_key[0] + ( (unsigned)_hj_key[1] << 8 )                      \
         + ( (unsigned)_hj_key[2] << 16 )                                         \
@@ -407,13 +410,13 @@ do {                                                                   \
 #define HASH_FIND_IN_BKT(tbl,hh,head,keyptr,keylen_in,out)                       \
 do {                                                                             \
  if (head.hh_head) DECLTYPE_ASSIGN(out,ELMT_FROM_HH(tbl,head.hh_head));          \
- else out=nullptr;                                                               \
+ else out=NULL;                                                                  \
  while (out) {                                                                   \
-    if ((out)->hh.keylen == keylen_in) {                                         \
-        if ((HASH_KEYCMP((out)->hh.key,keyptr,keylen_in)) == 0) break;           \
+    if ((out)->hh.keylen == keylen_in) {                                           \
+        if ((HASH_KEYCMP((out)->hh.key,keyptr,keylen_in)) == 0) break;             \
     }                                                                            \
     if ((out)->hh.hh_next) DECLTYPE_ASSIGN(out,ELMT_FROM_HH(tbl,(out)->hh.hh_next)); \
-    else out = nullptr;                                                          \
+    else out = NULL;                                                             \
  }                                                                               \
 } while(0)
 
@@ -422,7 +425,7 @@ do {                                                                            
 do {                                                                             \
  head.count++;                                                                   \
  (addhh)->hh_next = head.hh_head;                                                \
- (addhh)->hh_prev = nullptr;                                                     \
+ (addhh)->hh_prev = NULL;                                                        \
  if (head.hh_head) { (head).hh_head->hh_prev = (addhh); }                        \
  (head).hh_head=addhh;                                                           \
  if (head.count >= ((head.expand_mult+1) * HASH_BKT_CAPACITY_THRESH)             \
@@ -478,9 +481,10 @@ do {                                                                            
     unsigned _he_bkt;                                                            \
     unsigned _he_bkt_i;                                                          \
     struct UT_hash_handle *_he_thh, *_he_hh_nxt;                                 \
-    UT_hash_bucket *_he_newbkt      = nullptr;                                   \
-    UT_hash_bucket *_he_new_buckets = new UT_hash_bucket[2 * tbl->num_buckets];  \
-    std::memset(_he_new_buckets, 0, sizeof(UT_hash_bucket) * 2 * tbl->num_buckets); \
+    UT_hash_bucket *_he_newbkt      = NULL;                                      \
+    UT_hash_bucket *_he_new_buckets = (UT_hash_bucket*)calloc(                   \
+          2 * tbl->num_buckets, sizeof(UT_hash_bucket));                         \
+    if (!_he_new_buckets) { uthash_fatal( "out of memory"); }                    \
     tbl->ideal_chain_maxlen =                                                    \
        (tbl->num_items >> (tbl->log2_num_buckets+1)) +                           \
        ((tbl->num_items & ((tbl->num_buckets*2)-1)) ? 1 : 0);                    \
@@ -497,7 +501,7 @@ do {                                                                            
              _he_newbkt->expand_mult = _he_newbkt->count /                       \
                                         tbl->ideal_chain_maxlen;                 \
            }                                                                     \
-           _he_thh->hh_prev = nullptr;                                           \
+           _he_thh->hh_prev = NULL;                                              \
            _he_thh->hh_next = _he_newbkt->hh_head;                               \
            if (_he_newbkt->hh_head) _he_newbkt->hh_head->hh_prev =               \
                 _he_thh;                                                         \
@@ -505,7 +509,7 @@ do {                                                                            
            _he_thh = _he_hh_nxt;                                                 \
         }                                                                        \
     }                                                                            \
-    delete [] tbl->buckets;                                                      \
+    free( tbl->buckets); \
     tbl->num_buckets *= 2;                                                       \
     tbl->log2_num_buckets++;                                                     \
     tbl->buckets = _he_new_buckets;                                              \
@@ -520,9 +524,9 @@ do {                                                                            
 #define HASH_CLEAR(hh,head)                                                      \
 do {                                                                             \
   if (head) {                                                                    \
-    delete [] (head)->hh.tbl->buckets;                                           \
-    delete (head)->hh.tbl;                                                       \
-    (head)=nullptr;                                                              \
+    free((head)->hh.tbl->buckets);      \
+    free((head)->hh.tbl);                          \
+    (head)=NULL;                                                                 \
   }                                                                              \
 } while(0)
 
@@ -533,12 +537,12 @@ do {                                                                            
 
 #ifdef NO_DECLTYPE
 #define HASH_ITER(hh,head,el,tmp)                                                \
-for((el)=(head), (*(char**)(&(tmp)))=(char*)((head)?(head)->hh.next:nullptr);    \
-  el; (el)=(tmp),(*(char**)(&(tmp)))=(char*)((tmp)?(tmp)->hh.next:nullptr)) 
+for((el)=(head), (*(char**)(&(tmp)))=(char*)((head)?(head)->hh.next:NULL);       \
+  el; (el)=(tmp),(*(char**)(&(tmp)))=(char*)((tmp)?(tmp)->hh.next:NULL)) 
 #else
 #define HASH_ITER(hh,head,el,tmp)                                                \
-for((el)=(head),(tmp)=DECLTYPE(el)((head)?(head)->hh.next:nullptr);              \
-  el; (el)=(tmp),(tmp)=DECLTYPE(el)((tmp)?(tmp)->hh.next:nullptr))
+for((el)=(head),(tmp)=DECLTYPE(el)((head)?(head)->hh.next:NULL);                 \
+  el; (el)=(tmp),(tmp)=DECLTYPE(el)((tmp)?(tmp)->hh.next:NULL))
 #endif
 
 /* obtain a count of items in the hash */
