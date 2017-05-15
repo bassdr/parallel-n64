@@ -157,7 +157,8 @@ int32_t grLfbLock( int32_t type, int32_t buffer, int32_t writeMode,
 
    if (writeMode == GR_LFBWRITEMODE_565)
    {
-      std::thread threads[4];
+      auto const numThreads = 4;
+      static std::thread threads[numThreads];
       glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
       
       unsigned num = 0;
@@ -167,12 +168,15 @@ int32_t grLfbLock( int32_t type, int32_t buffer, int32_t writeMode,
         {
           for (signed j=0; j < height; j++)
           {
-            for (signed i=num; i < width; i+=4)
+            auto hj1w = (height-j-1)*width;
+            auto jw4 = j*width*4;
+            for (signed i=num; i < width; i+=numThreads)
             {
-                fb[(height-j-1)*width+i] =
-                  ((buf[j*width*4+i*4+0] >> 3) << 11) |
-                  ((buf[j*width*4+i*4+1] >> 2) <<  5) |
-                  (buf[j*width*4+i*4+2] >> 3);
+              auto i4 = i*4;
+              fb[hj1w+i] =
+                ((buf[jw4+i4+0] >> 3) << 11) |
+                ((buf[jw4+i4+1] >> 2) <<  5) |
+                (buf[jw4+i4+2] >> 3);
             }
           }
         }, Glide64::frameBuffer, buf, num++);
