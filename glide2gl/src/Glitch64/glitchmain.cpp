@@ -25,7 +25,6 @@
 #include <cstdio>
 #include <cmath>
 #include <thread>
-#include <deque>
 #include "glide.h"
 #include "glitchmain.h"
 #include "../Glide64/rdp.h"
@@ -158,22 +157,25 @@ int32_t grLfbLock( int32_t type, int32_t buffer, int32_t writeMode,
 
    if (writeMode == GR_LFBWRITEMODE_565)
    {
-      std::deque<std::thread> threads;
+      std::thread threads[4];
       glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buf);
-      for (signed j=0; j < height; j++)
+      
+      unsigned num = 0;
+      for(auto & thread : threads)
       {
-         threads.push_back(std::thread([j](uint16_t * fb, uint8_t const* const buf)
-         {
-            for (signed i=0; i < width; i++)
+        thread = std::thread([](uint16_t * fb, uint8_t const* const buf, unsigned num)
+        {
+          for (signed j=0; j < height; j++)
+          {
+            for (signed i=num; i < width; i+=4)
             {
-
-               fb[(height-j-1)*width+i] =
-                 ((buf[j*width*4+i*4+0] >> 3) << 11) |
-                 ((buf[j*width*4+i*4+1] >> 2) <<  5) |
-                 (buf[j*width*4+i*4+2] >> 3);
-            } 
-              
-         }, Glide64::frameBuffer, buf));
+                fb[(height-j-1)*width+i] =
+                  ((buf[j*width*4+i*4+0] >> 3) << 11) |
+                  ((buf[j*width*4+i*4+1] >> 2) <<  5) |
+                  (buf[j*width*4+i*4+2] >> 3);
+            }
+          }
+        }, Glide64::frameBuffer, buf, num++);
       }
       
       for(auto & thread : threads)
